@@ -7,12 +7,9 @@
 
 package org.lscode.vcf_compare;
 
-import ezvcard.property.StructuredName;
-
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Map;
 
 public class VcfCmp {
     public static void main(String[] args ){
@@ -55,19 +52,8 @@ public class VcfCmp {
         }
 
 
-        Map<WrappedVCard, List<String>> result =  newVCs.notContained(oldVCs);
+        List<DiffCard> result =  newVCs.notContained(oldVCs);
 
-        for (Map.Entry<WrappedVCard, List<String>> entry: result.entrySet()){
-            WrappedVCard card = entry.getKey();
-            List<String> numbers = entry.getValue();
-
-            StructuredName strName = card.source().getStructuredName();
-
-            System.out.println(card.name());
-            for (String num : numbers){
-                System.out.println("  > " + num);
-            }
-            System.out.println();
-        }
+        result.stream().map(d->d.description()).forEach(System.out::println);
     }
 }

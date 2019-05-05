@@ -14,6 +14,7 @@ import ezvcard.property.StructuredName;
 import ezvcard.property.Telephone;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class WrappedVCard {
@@ -90,10 +91,14 @@ public class WrappedVCard {
 //
 //    }
 
-    public List<String> numbersNotContained(WrappedVCards wrappedVCards){
-        List<String> myNumbers = collectRawNumbers();
-        List<String> result = myNumbers.stream().filter(n->!wrappedVCards.containsPhoneNumber(n)).collect(Collectors.toList());
-        return result;
+    public Optional<DiffCard> numbersNotContained(WrappedVCards wrappedVCards){
+        List<String> numbers = collectRawNumbers().stream().filter(n->!wrappedVCards.containsPhoneNumber(n)).collect(Collectors.toList());
+        if (numbers.size() > 0 ){
+            return Optional.of(new DiffCard(this, numbers));
+        }
+        else{
+            return Optional.empty();
+        }
     }
 
     private String stripNumber(String number){

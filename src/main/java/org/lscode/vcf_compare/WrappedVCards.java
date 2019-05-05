@@ -14,10 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -65,16 +62,10 @@ public class WrappedVCards {
         return vcardList.stream().anyMatch(v->v.containsPhoneNumber(number));
     }
 
-    public Map<WrappedVCard, List<String>> notContained(WrappedVCards otherCards){
-        Map<WrappedVCard, List<String>> result = new HashMap<>();
-
-        for (WrappedVCard card : vcardList){
-            List<String> numbers = card.numbersNotContained(otherCards);
-            if (!numbers.isEmpty()){
-                result.put(card, numbers);
-            }
-        }
-        return result;
+    public List<DiffCard> notContained(WrappedVCards otherCards){
+        List<DiffCard> diffCards = new ArrayList<>();
+        vcardList.stream().map(c->c.numbersNotContained(otherCards)).filter(Optional::isPresent).forEach(o->diffCards.add(o.get()));
+        return diffCards;
     }
 
     private void parseFromFile(File vcFile) throws RTIOException{
